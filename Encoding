@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define max1 100
+class tree
+{
+     public:
+    char ch;
+    int frequency;
+    tree *left;
+    tree *right;
+   
+    tree(char c,int freq)
+    {
+        ch=c;
+        frequency=freq;
+        left=right=NULL;
+    }
+    
+};
+class compare{
+    public:
+    bool operator()(tree *a,tree *b)
+    {
+        return a->frequency>b->frequency;
+    }
+};
+tree *generate(priority_queue<tree *,vector<tree*>,compare>pq)
+{
+    while(pq.size()!=1)
+    {
+        tree *left=pq.top();
+        pq.pop();
+        tree *right=pq.top();
+        pq.pop();
+        tree *t1=new tree('$',left->frequency+right->frequency);
+        t1->left=left;
+        t1->right=right;
+        pq.push(t1);
+    }
+    return pq.top();
+}
+void printcode(tree *root,int arr1[],int top)
+{
+    if(root==NULL)return;
+    if(root->left){
+        arr1[top]=0;
+    printcode(root->left,arr1,top+1);
+    }
+    if(root->right)
+    {
+        arr1[top]=1;
+        printcode(root->right,arr1,top+1);
+    }
+    if(!root->left&&!root->right)
+    {
+        for(int i=0;i<top;i++)
+        cout<<arr1[i];
+        cout<<" ";
+    }
+}
+void huffmantree(string s,int arr[],int size)
+{
+    priority_queue<tree *,vector<tree*>,compare>pq;
+    for(int i=0;i<size;i++)
+    {
+        tree *a=new tree(s[i],arr[i]);
+        pq.push(a);
+    }
+    tree *root=generate(pq);
+    int arr1[max1];
+    int top=0;
+    printcode(root,arr1,top);
+}
+int main() {
+	int t;
+	cin>>t;
+	while(t--)
+	{
+	    string s;
+	    cin>>s;
+	    int n=s.size();
+	    int arr[n];
+	    for(int i=0;i<n;i++)
+	    cin>>arr[i];
+	    huffmantree(s,arr,n);
+	    cout<<endl;
+	}
+	return 0;
+}
